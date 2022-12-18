@@ -3,14 +3,17 @@ class SleepRecord < ApplicationRecord
   # Associations
   belongs_to :user
 
+  # Enums
+  enum status: { recording: 0, ended: 1 }
+
   # Validations
-  validates_presence_of :hours, :minutes, :seconds
+  validates_presence_of :started_at, :hours, :minutes, :seconds, :duration, :status
   validates_numericality_of :hours, :minutes, :seconds, only_integer: true
   
   # Callbacks
-  before_save :set_length_as_seconds
+  before_save :set_status
 
-  def set_length_as_seconds
-    self.length_in_seconds = (hours * 3600) + (minutes * 60) + seconds
+  def set_status
+    self.status = self.ended_at.present? ? :ended : :recording
   end
 end
