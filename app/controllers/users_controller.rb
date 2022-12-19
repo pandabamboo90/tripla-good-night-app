@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: %i[ show update destroy ]
+  before_action :set_user, only: %i[show]
+  before_action :set_user_by_user_id, only: %i[follow unfollow view_follower_sleep_records]
 
   # GET /users
   def index
@@ -13,39 +14,46 @@ class UsersController < ApplicationController
     render json: @user
   end
 
-  # POST /users
-  def create
-    @user = User.new(user_params)
+  # POST /users/:user_id/follow
+  def follow
+    following_user = @user.follow_user!(follower_id: params[:follower_id])
 
-    if @user.save
-      render json: @user, status: :created, location: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
-    end
+    render json: {
+      message: "You are now following #{following_user.name}"
+    }
   end
 
-  # PATCH/PUT /users/1
-  def update
-    if @user.update(user_params)
-      render json: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
-    end
+  # DELETE /users/:user_id/unfollow
+  def unfollow
+    unfollowed_user = @user.unfollow_user!(follower_id: params[:follower_id])
+
+    render json: {
+      message: "You have unfollowed #{unfollowed_user.name}"
+    }
   end
 
-  # DELETE /users/1
-  def destroy
-    @user.destroy
+  # GET /users/:user_id/view_follower_sleep_records
+  def view_follower_sleep_records
+    sleep_records = @user.view_follower_sleep_records(follower_id: params[:follower_id])
+
+    render json: {
+      data: sleep_records
+    }
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def user_params
-      params.require(:user).permit(:name)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_user
+    @user = User.find(params[:id])
+  end
+
+  def set_user_by_user_id
+    @user = User.find(params[:user_id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def user_params
+    params.require(:user).permit(:name)
+  end
 end

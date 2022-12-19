@@ -1,7 +1,7 @@
 class SleepRecordsController < ApplicationController
 
   before_action :set_user
-  before_action :set_sleep_record, only: %i[ show update destroy ]
+  before_action :set_sleep_record, only: %i[ show update ]
 
   # GET /users/:user_id/sleep_records
   def index
