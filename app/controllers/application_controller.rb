@@ -2,8 +2,8 @@ class ApplicationController < ActionController::API
 
   before_action :set_current_user
   def set_current_user
-    @current_user = User.find(request.headers['current-user-id'])
-    render_errors(status: 401, title: 'Unauthenticated', detail: 'Unauthenticated') if @current_user.blank?
+    @current_user = User.find_by(id: request.headers['current-user-id'])
+    render_errors(status: 401, title: 'Unauthenticated', detail: '') if @current_user.blank?
   end
 
   def index
