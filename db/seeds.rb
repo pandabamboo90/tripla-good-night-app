@@ -12,11 +12,25 @@ def seed_1w_sleep_record(user:)
   end
 end
 
+def seed_followers(user:)
+  other_users = User.where.not(id: user.id)
+  other_users.each do |other_user|
+    user.follow_user!(following_user_id: other_user.id)
+  end
+end
+
+UserFollower.destroy_all
+SleepRecord.destroy_all
+User.destroy_all
 
 ActiveRecord::Base.transaction do
   5.times do |idx|
     user = User.create!(name: Faker::Name.name)
 
     seed_1w_sleep_record(user: user)
+  end
+
+  User.find_each do |user|
+    seed_followers(user: user)
   end
 end

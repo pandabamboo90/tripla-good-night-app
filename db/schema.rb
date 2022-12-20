@@ -33,16 +33,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_18_075438) do
 
   create_table "users_followers", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.integer "follower_id", null: false
+    t.integer "following_user_id", null: false
     t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["follower_id"], name: "index_users_followers_on_follower_id"
-    t.index ["user_id", "follower_id"], name: "unique_index_on_user_id_and_follower_id", unique: true
+    t.index ["following_user_id"], name: "index_users_followers_on_following_user_id"
+    t.index ["user_id", "following_user_id"], name: "unique_index_on_user_id_and_following_user_id", unique: true
     t.index ["user_id"], name: "index_users_followers_on_user_id"
   end
 
   add_foreign_key "sleep_records", "users"
   add_foreign_key "users_followers", "users"
-  add_foreign_key "users_followers", "users", column: "follower_id"
+  add_foreign_key "users_followers", "users", column: "following_user_id"
 end

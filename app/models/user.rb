@@ -3,8 +3,6 @@ class User < ApplicationRecord
   # Associations
   has_many :sleep_records
   has_many :user_followers
-  has_many :followers, through: :user_followers, foreign_key: :follower_id, class_name: 'User'
-  has_many :following_users, through: :user_followers, foreign_key: :user_id, class_name: 'User'
 
   # Validations
   validates_presence_of :name
@@ -12,37 +10,55 @@ class User < ApplicationRecord
   # ------------------------------------------------
   # Public methods
   # ------------------------------------------------
-  def follow_user!(follower_id:)
-    raise StandardError.new "You can't follow yourself" if follower_id.to_s == self.id.to_s
+
+  def followers
+    users_ids = UserFollower.where(following_user_id: self.id, status: :following)
+                    .pluck(:user_id)
+    User.where(id: users_ids)
+  end
+
+  def following_users
+    following_users_ids = UserFollower.where(user_id: self.id, status: :following)
+                              .pluck(:following_user_id)
+    User.where(id: following_users_ids)
+  end
+
+  def follow_user!(user_id:)
+    raise StandardError.new "You can't follow yourself" if user_id.to_s == self.id.to_s
 
     user_follower = self.user_followers.find_or_initialize_by(
-      follower_id: follower_id
+      following_user_id: user_id
     )
-    user_follower.status ||= :following
+    user_follower.status = :following
     user_follower.save!
 
     # Return following user
-    User.find(follower_id)
+    User.find(user_id)
   end
 
-  def unfollow_user!(follower_id:)
-    raise StandardError.new "You can't unfollow yourself" if follower_id.to_s == self.id.to_s
+  def unfollow_user!(user_id:)
+    raise StandardError.new "You can't unfollow yourself" if user_id.to_s == self.id.to_s
 
-    user_follower = self.user_followers.find_or_initialize_by(
-      follower_id: follower_id
+    user_follower = self.user_followers.find_by(
+      following_user_id: user_id
     )
-    user_follower.status ||= :unfollowed
-    user_follower.save!
+
+    if user_follower.present?
+      user_follower.status = :unfollowed
+      user_follower.save!
+    else
+      raise StandardError.new "You are not following this User"
+    end
 
     # Return unfollowed user
-    User.find(follower_id)
+    User.find(user_id)
   end
 
-  def view_follower_sleep_records(follower_id:)
-    is_following = self.user_followers.where(status: :following, follower_id: follower_id).exists?
+  def view_follower_sleep_records(user_id:)
+    is_following = self.followers.where(id: user_id).present?
     raise StandardError.new "you are not allowed to view sleep records of this Follower because they are not following you" if is_following.blank?
 
-    follower = User.find(follower_id)
+    follower = User.find(user_id)
     sleep_records = follower.sleep_records.order(duration: 'desc')
   end
 
@@ -65,7 +81,8 @@ class User < ApplicationRecord
     sleep_record
   end
 
-  def update_sleep_record!(sleep_record:, sleep_record_params:)
+  def update_sleep_record!(sleep_record_id:, sleep_record_params:)
+    sleep_record = self.sleep_records.find_by!(id: sleep_record_id)
     started_at_as_datetime = sleep_record.started_at
     end_at_as_datetime = Timeliness.parse(sleep_record_params[:ended_at], :datetime, strict: true)
 
