@@ -59,7 +59,7 @@ class User < ApplicationRecord
     raise StandardError.new "you are not allowed to view sleep records of this Follower because they are not following you" if is_following.blank?
 
     follower = User.find(user_id)
-    sleep_records = follower.sleep_records.order(duration: 'desc')
+    sleep_records = follower.sleep_records.order(duration: :desc)
   end
 
   def add_sleep_record!(sleep_record_params:)

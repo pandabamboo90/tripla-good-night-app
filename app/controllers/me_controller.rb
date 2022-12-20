@@ -2,8 +2,7 @@ class MeController < ApplicationController
 
   # GET /me/sleep_records
   def sleep_records
-    sleep_records = @current_user.sleep_records
-                                 .order(:created_at, :desc)
+    sleep_records = @current_user.sleep_records.order(created_at: :desc)
 
     render json: {
       data: sleep_records
@@ -12,10 +11,11 @@ class MeController < ApplicationController
 
   # POST me/sleep_records
   def add_sleep_record
-    sleep_record = @current_user.add_sleep_record!(sleep_record_params: sleep_record_params)
+    @current_user.add_sleep_record!(sleep_record_params: sleep_record_params)
+    sleep_records = @current_user.sleep_records.order(created_at: :desc)
 
     render json: {
-      data: sleep_record
+      data: sleep_records
     }
   end
 

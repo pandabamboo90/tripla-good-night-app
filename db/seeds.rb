@@ -15,7 +15,7 @@ end
 def seed_followers(user:)
   other_users = User.where.not(id: user.id)
   other_users.each do |other_user|
-    user.follow_user!(following_user_id: other_user.id)
+    user.follow_user!(user_id: other_user.id)
   end
 end
 
