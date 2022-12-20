@@ -86,7 +86,7 @@ class User < ApplicationRecord
     started_at_as_datetime = sleep_record.started_at
     end_at_as_datetime = Timeliness.parse(sleep_record_params[:ended_at], :datetime, strict: true)
 
-    duration = end_at_as_datetime.present? ? end_at_as_datetime - started_at_as_datetime : 0
+    duration = end_at_as_datetime.present? ? (end_at_as_datetime - started_at_as_datetime).to_i : 0
     duration_as_hms = seconds_to_hms(duration).split(':').map(&:to_i)
 
     sleep_record.update!(
