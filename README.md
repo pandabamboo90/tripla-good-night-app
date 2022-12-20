@@ -50,8 +50,12 @@ Please view the section [API documentation (Postman Collection)](#api-documentat
 
 ## API documentation (Postman collection)
 
-**Noted / required**
+---
+**Important note !!!**
+
 As we are not implementing any authentication logic, so the current user is set by the `current-user-id` header key/value, please make to sure include this in request headers
+
+---
 
 The provided Postman collection included following APIs, group by folders
 ![api_list.png](doc/img/api_list.png)
