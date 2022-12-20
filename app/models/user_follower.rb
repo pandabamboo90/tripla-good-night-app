@@ -7,4 +7,5 @@ class UserFollower < ApplicationRecord
 
   # Validations
   validates_presence_of :user_id, :following_user_id, :status
+  validates_uniqueness_of :user_id, scope: [:following_user_id], message: 'and Following User record already existed'
 end

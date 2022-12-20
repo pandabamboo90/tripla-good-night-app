@@ -7,3 +7,7 @@ user_one:
 user_two:
   id: 2
   name: User2
+
+user_three:
+  id: 3
+  name: User3

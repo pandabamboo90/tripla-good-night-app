@@ -8,7 +8,7 @@ class SleepRecord < ApplicationRecord
 
   # Validations
   validates_presence_of :started_at, :hours, :minutes, :seconds, :duration, :status
-  validates_numericality_of :hours, :minutes, :seconds, only_integer: true
+  validates_numericality_of :hours, :minutes, :seconds, :duration, only_integer: true, greater_than_or_equal_to: 0
   
   # Callbacks
   before_save :set_status
