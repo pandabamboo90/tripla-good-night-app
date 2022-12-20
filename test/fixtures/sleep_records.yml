@@ -5,11 +5,13 @@ one:
   hours: 1
   minutes: 1
   seconds: 1
-  user: one
+  user_id: 1
+  started_at: <%= Time.zone.now %>
 
 two:
   duration: 0
   hours: 1
   minutes: 1
   seconds: 1
-  user: two
+  user_id: 2
+  started_at: <%= Time.zone.now %>
