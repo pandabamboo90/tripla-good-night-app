@@ -1,5 +1,7 @@
 class User < ApplicationRecord
 
+  include ::TimeUtils
+
   # Associations
   has_many :sleep_records
   has_many :user_followers
@@ -99,9 +101,5 @@ class User < ApplicationRecord
     )
 
     sleep_record
-  end
-
-  def seconds_to_hms(sec)
-    "%02d:%02d:%02d" % [sec / 3600, sec / 60 % 60, sec % 60]
   end
 end
